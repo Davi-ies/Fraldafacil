@@ -1,28 +1,19 @@
-
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-  margin: 0;
-  padding: 20px;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #f0f0f0;
 }
 h1, h2 {
-  color: #333;
+    color: #333;
 }
-input, select, button {
-  padding: 10px;
-  margin: 5px 0;
-  width: 100%;
-  max-width: 300px;
+#estoque {
+    margin-bottom: 10px;
 }
 button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-#estoque, #resumoSemanal {
-  background-color: white;
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 10px;
+    margin: 5px;
+    padding: 10px;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 5px;
 }

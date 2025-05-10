@@ -1,43 +1,34 @@
-
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FraldaFácil</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FraldaFácil v3</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="login-section">
-    <h2>FraldaFácil - Login</h2>
-    <input type="text" id="username" placeholder="Usuário">
-    <input type="password" id="password" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
-  </div>
+    <h1>FraldaFácil</h1>
+    <div id="login-section">
+        <input type="email" id="email" placeholder="Email">
+        <button onclick="login()">Entrar</button>
+    </div>
 
-  <div id="app-section" style="display:none;">
-    <h1>Bem-vindo, <span id="user-display"></span>!</h1>
-    <button onclick="logout()">Sair</button>
+    <div id="app" style="display:none;">
+        <h2>Estoque Atual</h2>
+        <div id="estoque"></div>
+        <button onclick="adicionarEstoque()">Adicionar Estoque</button>
+        <button onclick="registrarUso()">Registrar Uso</button>
 
-    <h2>Registrar uso</h2>
-    <label for="tamanho">Tamanho:</label>
-    <select id="tamanho">
-      <option value="P">P</option>
-      <option value="M">M</option>
-      <option value="G">G</option>
-    </select>
-    <input type="number" id="quantidade" placeholder="Quantidade usada">
-    <button onclick="registrarUso()">Registrar</button>
+        <h2>Gráfico de Estoque (%)</h2>
+        <canvas id="graficoEstoque" width="400" height="200"></canvas>
 
-    <h2>Estoque atual</h2>
-    <div id="estoque"></div>
-    <canvas id="graficoEstoque" width="400" height="200"></canvas>
+        <h2>Previsão de Consumo</h2>
+        <p id="necessidadeSemanal"></p>
+        <p id="estoqueDuracao"></p>
+        <p id="dataFimEstoque"></p>
+    </div>
 
-    <h2>Necessidade semanal estimada</h2>
-    <div id="resumoSemanal"></div>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

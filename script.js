@@ -1,91 +1,90 @@
+let usuarioLogado = null;
+let estoque = {
+    RN: 0, P: 0, M: 0, G: 0, GG: 0
+};
 
-let users = {};
-let currentUser = null;
+const usoPorDia = {
+    RN: 10, P: 8, M: 6, G: 5, GG: 4
+};
 
 function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  if (!username || !password) return alert("Preencha todos os campos!");
-
-  let savedUsers = JSON.parse(localStorage.getItem("fraldaUsers") || "{}");
-
-  if (!savedUsers[username]) {
-    savedUsers[username] = { password, estoque: { P: 0, M: 0, G: 0 }, uso: [] };
-    localStorage.setItem("fraldaUsers", JSON.stringify(savedUsers));
-  }
-
-  if (savedUsers[username].password !== password) return alert("Senha incorreta!");
-
-  currentUser = username;
-  users = savedUsers;
-  document.getElementById("login-section").style.display = "none";
-  document.getElementById("app-section").style.display = "block";
-  document.getElementById("user-display").innerText = currentUser;
-  atualizarInterface();
+    const email = document.getElementById("email").value;
+    if (email) {
+        usuarioLogado = email;
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        carregarEstoque();
+        atualizarInterface();
+    }
 }
 
-function logout() {
-  currentUser = null;
-  document.getElementById("login-section").style.display = "block";
-  document.getElementById("app-section").style.display = "none";
+function adicionarEstoque() {
+    for (let tamanho in estoque) {
+        const qtd = prompt(`Adicionar quantas fraldas tamanho ${tamanho}?`, "0");
+        estoque[tamanho] += parseInt(qtd) || 0;
+    }
+    salvarEstoque();
+    atualizarInterface();
 }
 
 function registrarUso() {
-  const tamanho = document.getElementById("tamanho").value;
-  const quantidade = parseInt(document.getElementById("quantidade").value);
-  if (!quantidade || quantidade < 0) return alert("Quantidade inválida!");
-
-  const user = users[currentUser];
-  user.estoque[tamanho] -= quantidade;
-  user.uso.push({ data: new Date().toISOString(), tamanho, quantidade });
-  salvarDados();
-  atualizarInterface();
+    for (let tamanho in estoque) {
+        estoque[tamanho] -= usoPorDia[tamanho];
+        if (estoque[tamanho] < 0) estoque[tamanho] = 0;
+    }
+    salvarEstoque();
+    atualizarInterface();
 }
 
-function salvarDados() {
-  localStorage.setItem("fraldaUsers", JSON.stringify(users));
+function salvarEstoque() {
+    localStorage.setItem(`estoque_${usuarioLogado}`, JSON.stringify(estoque));
+}
+
+function carregarEstoque() {
+    const data = localStorage.getItem(`estoque_${usuarioLogado}`);
+    if (data) estoque = JSON.parse(data);
 }
 
 function atualizarInterface() {
-  const user = users[currentUser];
-  const estoqueDiv = document.getElementById("estoque");
-  estoqueDiv.innerHTML = "";
-  for (const t of ["P", "M", "G"]) {
-    estoqueDiv.innerHTML += `<p>${t}: ${user.estoque[t]} unidades</p>`;
-  }
-  desenharGrafico();
-  mostrarResumoSemanal();
-}
-
-function desenharGrafico() {
-  const ctx = document.getElementById('graficoEstoque').getContext('2d');
-  const dados = users[currentUser].estoque;
-  if (window.grafico) window.grafico.destroy();
-  window.grafico = new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: ['P', 'M', 'G'],
-      datasets: [{
-        data: [dados.P, dados.M, dados.G],
-        backgroundColor: ['#4CAF50', '#FFC107', '#2196F3']
-      }]
+    let div = document.getElementById("estoque");
+    div.innerHTML = "";
+    for (let tamanho in estoque) {
+        div.innerHTML += `<p>${tamanho}: ${estoque[tamanho]} unidades</p>`;
     }
-  });
+    atualizarGraficos();
+    atualizarPrevisao();
 }
 
-function mostrarResumoSemanal() {
-  const user = users[currentUser];
-  const usoUltimos7Dias = user.uso.filter(u => {
-    const dataUso = new Date(u.data);
-    return (new Date() - dataUso) / (1000 * 60 * 60 * 24) <= 7;
-  });
-  const resumo = { P: 0, M: 0, G: 0 };
-  usoUltimos7Dias.forEach(u => resumo[u.tamanho] += u.quantidade);
+function atualizarGraficos() {
+    const ctx = document.getElementById("graficoEstoque").getContext("2d");
+    const total = Object.values(estoque).reduce((a, b) => a + b, 0);
+    const data = Object.keys(estoque).map(t => total ? (estoque[t] / total) * 100 : 0);
 
-  const div = document.getElementById("resumoSemanal");
-  div.innerHTML = "";
-  for (const t of ["P", "M", "G"]) {
-    div.innerHTML += `<p>Você usou ${resumo[t]} fraldas ${t} na última semana.</p>`;
-    div.innerHTML += `<p>Recomendamos manter pelo menos ${resumo[t] + 5} fraldas ${t} para a próxima semana.</p>`;
-  }
+    if (window.myChart) window.myChart.destroy();
+    window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(estoque),
+            datasets: [{
+                label: '% por tamanho',
+                data: data,
+                backgroundColor: 'rgba(52, 152, 219, 0.7)'
+            }]
+        }
+    });
+}
+
+function atualizarPrevisao() {
+    const necessidade = Object.keys(usoPorDia).map(t => `${t}: ${usoPorDia[t] * 7} fraldas/semana`).join("<br>");
+    document.getElementById("necessidadeSemanal").innerHTML = `<strong>Necessidade semanal:</strong><br>${necessidade}`;
+
+    let totalFraldas = Object.keys(estoque).reduce((soma, t) => soma + estoque[t], 0);
+    let totalUsoDia = Object.values(usoPorDia).reduce((soma, uso) => soma + uso, 0);
+
+    let diasDuracao = totalUsoDia ? Math.floor(totalFraldas / totalUsoDia) : 0;
+    document.getElementById("estoqueDuracao").innerText = `Estoque atual deve durar cerca de ${diasDuracao} dia(s).`;
+
+    const fim = new Date();
+    fim.setDate(fim.getDate() + diasDuracao);
+    document.getElementById("dataFimEstoque").innerText = `Previsão de término do estoque: ${fim.toLocaleDateString()}`;
 }
