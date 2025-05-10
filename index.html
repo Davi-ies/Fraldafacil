@@ -1,47 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FraldaFácil</title>
-  <link rel="stylesheet" href="style.css"/>
-  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>FraldaFácil</h1>
+  <div id="login-section">
+    <h2>FraldaFácil - Login</h2>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+  </div>
 
-    <section>
-      <h2>Estoque Atual</h2>
-      <ul id="estoque-list"></ul>
-    </section>
+  <div id="app-section" style="display:none;">
+    <h1>Bem-vindo, <span id="user-display"></span>!</h1>
+    <button onclick="logout()">Sair</button>
 
-    <section>
-      <h2>Adicionar Fraldas ao Estoque</h2>
-      <input type="text" id="tamanhoAdd" placeholder="Tamanho (ex: P, M, G)" />
-      <input type="number" id="quantidadeAdd" placeholder="Quantidade" />
-      <button onclick="adicionarEstoque()">Adicionar</button>
-    </section>
+    <h2>Registrar uso</h2>
+    <label for="tamanho">Tamanho:</label>
+    <select id="tamanho">
+      <option value="P">P</option>
+      <option value="M">M</option>
+      <option value="G">G</option>
+    </select>
+    <input type="number" id="quantidade" placeholder="Quantidade usada">
+    <button onclick="registrarUso()">Registrar</button>
 
-    <section>
-      <h2>Registrar Uso</h2>
-      <input type="text" id="tamanhoUso" placeholder="Tamanho" />
-      <input type="number" id="quantidadeUso" placeholder="Quantidade usada" />
-      <button onclick="registrarUso()">Registrar</button>
-    </section>
+    <h2>Estoque atual</h2>
+    <div id="estoque"></div>
+    <canvas id="graficoEstoque" width="400" height="200"></canvas>
 
-    <section>
-      <h2>Histórico</h2>
-      <ul id="historico-list"></ul>
-    </section>
+    <h2>Necessidade semanal estimada</h2>
+    <div id="resumoSemanal"></div>
   </div>
 
   <script src="script.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker registrado!'));
-    }
-  </script>
 </body>
 </html>
