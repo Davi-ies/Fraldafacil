@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FraldaFácil</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="container">
+    <h1>FraldaFácil</h1>
+
+    <section>
+      <h2>Estoque Atual</h2>
+      <ul id="estoque-list"></ul>
+    </section>
+
+    <section>
+      <h2>Adicionar Fraldas ao Estoque</h2>
+      <input type="text" id="tamanhoAdd" placeholder="Tamanho (ex: P, M, G)" />
+      <input type="number" id="quantidadeAdd" placeholder="Quantidade" />
+      <button onclick="adicionarEstoque()">Adicionar</button>
+    </section>
+
+    <section>
+      <h2>Registrar Uso</h2>
+      <input type="text" id="tamanhoUso" placeholder="Tamanho" />
+      <input type="number" id="quantidadeUso" placeholder="Quantidade usada" />
+      <button onclick="registrarUso()">Registrar</button>
+    </section>
+
+    <section>
+      <h2>Histórico</h2>
+      <ul id="historico-list"></ul>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker registrado!'));
+    }
+  </script>
+</body>
+</html>
